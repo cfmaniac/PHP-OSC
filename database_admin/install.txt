@@ -1,0 +1,36 @@
+osCommerce, Open Source E-Commerce Solutions
+http://www.oscommerce.com
+
+Copyright © 2003 osCommerce
+  
+Database Manager v2.0
+Custom Developed by James Harvey aka DemonAngel
+altered@alteredpixels.net
+Copyright © 2003 Altered Pixels
+ 
+http://www.alteredpixels.net/
+
+
+NOTES ON THIS CONTRIBUTION:
+The Database Manager permits you to access your MySQL database directly through the oscommerce admin panel. Very powerful database management and administration utility. Just as Powerful as php
+
+Add, Alter, Drop, and Optimize Database tables from one file.
+
+
+INSTALLATION:
+Contents of this package:
+admin/database_admin.php
+admin/images/categories/database.gif
+install.txt
+
+Simply Upload the files to your admin directory, keeping the structure of the directories intact.
+After that, Access the script via: http://yourserver.com/admin/database_admin.php
+
+Files to Modify:
+admin/includes/boxes/tools.php
+
+In the tools.php box file, add the line:
+'<a href="database_admin.php" class="menuBoxContentLink">Database Admin</a><br>' .
+
+That's it.
+Happy Databasing!!!   

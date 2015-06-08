@@ -1,0 +1,133 @@
+These are the changes for the the Categories.php file located in your catalog/admin folder.
+
+Total Additions to make: 3
+
+First Addition:
+Find the Line that looks like:
+(Make sure you are under the action if ($action == 'insert_product') {)
+tep_db_query("insert into " . TABLE_PRODUCTS_TO_CATEGORIES . " (products_id, categories_id) values ('" . (int)$products_id . "', '" . (int)$current_category_id . "')");
+
+after it add:
+          //Added for Specials Automation Update
+		$specials_id = tep_db_prepare_input($HTTP_POST_VARS['specials_id']);
+        $products_price = tep_db_prepare_input($HTTP_POST_VARS['products_price']);
+        $specials_price = tep_db_prepare_input($HTTP_POST_VARS['specials_price']);
+        $vday = tep_db_prepare_input($HTTP_POST_VARS['vday']);
+        $vmonth = tep_db_prepare_input($HTTP_POST_VARS['vmonth']);
+        $vyear = tep_db_prepare_input($HTTP_POST_VARS['vyear']);
+
+        // check if valid from date is later than expires date
+        if (tep_not_null($day) && tep_not_null($month) && tep_not_null($year) &&
+        	tep_not_null($vday) && tep_not_null($vmonth) && tep_not_null($vyear)) {
+
+        	if (($vyear > $year) ||
+        		($vmonth > $month && $vyear == $year) ||
+        		($vday > $day && $vmonth == $month && $vyear == $year))
+        		{
+        			// if so, swap the dates
+        			$tempdate = $vyear; $vyear = $year; $year = $tempdate;
+        			$tempdate = $month; $vmonth = $month; $month = $tempdate;
+        			$tempdate = $vday; $vday = $day; $day = $tempdate;
+        		}
+        }
+
+        if (substr($specials_price, -1) == '%') $specials_price = ($products_price - (($specials_price / 100) * $products_price));
+
+        $expires_date = '';
+        if (tep_not_null($day) && tep_not_null($month) && tep_not_null($year)) {
+          $expires_date = $year;
+          $expires_date .= (strlen($month) == 1) ? '0' . $month : $month;
+          $expires_date .= (strlen($day) == 1) ? '0' . $day : $day;
+        }
+
+        $validfrom_date = '';
+        if (tep_not_null($vday) && tep_not_null($vmonth) && tep_not_null($vyear)) {
+          $validfrom_date = $vyear;
+          $validfrom_date .= (strlen($vmonth) == 1) ? '0' . $vmonth : $vmonth;
+          $validfrom_date .= (strlen($vday) == 1) ? '0' . $vday : $vday;
+        }
+        tep_db_query("insert into " . TABLE_SPECIALS . " (specials_id, products_id, specials_new_products_price, specials_date_added, expires_date, status, valid_from_date) values ('" . (int)$products_id . "','" . (int)$products_id . "', '" . tep_db_input($specials_price) . "', now(), '" . tep_db_input($expires_date) . "', '1', '".  tep_db_input($validfrom_date)  ."')");
+		
+					//End Specials Automation Update
+
+Second Addition:
+A few Lines later you'll see the line action:
+elseif ($action == 'update_product') {
+
+After the line: 
+tep_db_perform(TABLE_PRODUCTS, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "'");
+
+Add the Following:
+ //Added for Specials Automation Update
+		$specials_id = tep_db_prepare_input($HTTP_POST_VARS['specials_id']);
+        $products_price = tep_db_prepare_input($HTTP_POST_VARS['products_price']);
+        $specials_price = tep_db_prepare_input($HTTP_POST_VARS['specials_price']);
+        $vday = tep_db_prepare_input($HTTP_POST_VARS['vday']);
+        $vmonth = tep_db_prepare_input($HTTP_POST_VARS['vmonth']);
+        $vyear = tep_db_prepare_input($HTTP_POST_VARS['vyear']);
+
+        // check if valid from date is later than expires date
+        if (tep_not_null($day) && tep_not_null($month) && tep_not_null($year) &&
+        	tep_not_null($vday) && tep_not_null($vmonth) && tep_not_null($vyear)) {
+
+        	if (($vyear > $year) ||
+        		($vmonth > $month && $vyear == $year) ||
+        		($vday > $day && $vmonth == $month && $vyear == $year))
+        		{
+        			// if so, swap the dates
+        			$tempdate = $vyear; $vyear = $year; $year = $tempdate;
+        			$tempdate = $month; $vmonth = $month; $month = $tempdate;
+        			$tempdate = $vday; $vday = $day; $day = $tempdate;
+        		}
+        }
+
+        if (substr($specials_price, -1) == '%') $specials_price = ($products_price - (($specials_price / 100) * $products_price));
+
+        $expires_date = '';
+        if (tep_not_null($day) && tep_not_null($month) && tep_not_null($year)) {
+          $expires_date = $year;
+          $expires_date .= (strlen($month) == 1) ? '0' . $month : $month;
+          $expires_date .= (strlen($day) == 1) ? '0' . $day : $day;
+        }
+
+        $validfrom_date = '';
+        if (tep_not_null($vday) && tep_not_null($vmonth) && tep_not_null($vyear)) {
+          $validfrom_date = $vyear;
+          $validfrom_date .= (strlen($vmonth) == 1) ? '0' . $vmonth : $vmonth;
+          $validfrom_date .= (strlen($vday) == 1) ? '0' . $vday : $vday;
+        }
+        tep_db_query("update " . TABLE_SPECIALS . " set specials_id = '".(int)$products_id ."', status = '1', specials_new_products_price ='".tep_db_input($specials_price)."', expires_date='".tep_db_input($expires_date)."', valid_from_date ='".tep_db_input($valid_from_date)."' where products_id = '" . (int)$products_id . "'");
+        
+					//End Specials Automation Update
+					
+Third Addition:
+
+Right Before the Line:
+<script language="javascript"><!-- updateGross();//--></script>
+
+Add the Following:
+<tr bgcolor="#ebebff">
+				   <td colspan="2" class="main"><b>Products Special</b><br>
+				   <span class="smalltext">This is for automating the Specials Fucntions in the core. If you care to have have a product listed as a special, fillout the fields below. Otherwise skip this portion of the form.</span></td>
+				   </tr>
+				   <tr bgcolor="#ebebff">
+				   <td colspan="2"><?php 
+      //Added for the Specials Automation
+    ?>
+				   <table border="0" cellspacing="0" cellpadding="2">
+         <tr>
+            <td class="main"><?php echo 'Product Special Price:'; ?>&nbsp;</td>
+            <td class="main"><?php echo tep_draw_input_field('specials_price', (isset($product_specials['specials_new_products_price']) ? $product_specials['specials_new_products_price'] : '')); ?></td>
+          </tr>
+          <tr>
+            <td class="main"><?php echo 'Product Special Starts on:<br><span class="smalltext">mm-dd-yyyy Format</span>'; ?>&nbsp;</td>
+            <td class="main"><?php echo tep_draw_input_field('vmonth', (isset($product_specials['valid_from_date']) ? substr($product_specials['valid_from_date'], 5, 2) : ''), 'size="2" maxlength="2" class="cal-TextBox"') . tep_draw_input_field('vday', (isset($product_specials['valid_from_date']) ? substr($product_specials['valid_from_date'], 8, 2) : ''), 'size="2" maxlength="2" class="cal-TextBox"') .  tep_draw_input_field('vyear', (isset($product_specials['valid_from_date']) ? substr($product_specials['valid_from_date'], 0, 4) : ''), 'size="4" maxlength="4" class="cal-TextBox"'); ?><a class="so-BtnLink" href="javascript:calClick();return false;" onMouseOver="calSwapImg('BTN_valid_date', 'img_Date_OVER',true);" onMouseOut="calSwapImg('BTN_valid_date', 'img_Date_UP',true);" onClick="calSwapImg('BTN_valid_date', 'img_Date_DOWN');showCalendar('new_special','vday', 'vmonth', 'vyear','dte_valid_When','BTN_valid_date');return false;"><?php echo tep_image(DIR_WS_IMAGES . 'cal_date_up.gif', 'Calendar', '22', '17', 'align="absmiddle" name="BTN_valid_date"'); ?></a>
+          </tr>
+          <tr>
+            <td class="main"><?php echo 'Product Special expires on:<br><span class="smalltext">mm-dd-yyyy Format</span>'; ?>&nbsp;</td>
+            <td class="main"><?php echo tep_draw_input_field('month', (isset($product_specials['expires_date']) ? substr($product_specials['expires_date'], 5, 2) : ''), 'size="2" maxlength="2" class="cal-TextBox"') . tep_draw_input_field('day', (isset($product_specials['expires_date']) ? substr($product_specials['expires_date'], 8, 2) : ''), 'size="2" maxlength="2" class="cal-TextBox"') . tep_draw_input_field('year', (isset($product_specials['expires_date']) ? substr($product_specials['expires_date'], 0, 4) : ''), 'size="4" maxlength="4" class="cal-TextBox"'); ?><a class="so-BtnLink" href="javascript:calClick();return false;" onMouseOver="calSwapImg('BTN_date', 'img_Date_OVER',true);" onMouseOut="calSwapImg('BTN_date', 'img_Date_UP',true);" onClick="calSwapImg('BTN_date', 'img_Date_DOWN');showCalendar('new_special', 'day', 'month','year', 'dteWhen','BTN_date');return false;"><?php echo tep_image(DIR_WS_IMAGES . 'cal_date_up.gif', 'Calendar', '22', '17', 'align="absmiddle" name="BTN_date"'); ?></a></td>
+          </tr>
+        </table>
+		</td></tr>
+		
+		That is All

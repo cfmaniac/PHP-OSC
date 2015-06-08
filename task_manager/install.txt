@@ -1,0 +1,294 @@
+osCommerce, Open Source E-Commerce Solutions
+http://www.oscommerce.com
+
+Copyright © 2003 osCommerce
+  
+Task Manager Contribution 2.0
+Custom Developed by James Harvey aka DemonAngel
+altered@alteredpixels.net
+Copyright © 2003 Altered Pixels
+ 
+http://www.alteredpixels.net/
+http://www.oscommerce.com/community/contributions,4145
+
+NOTES ON THIS CONTRIBUTION:
+The Task Manager Contribution was created out of a need to ascertain the status of many tasks needed to be done in-store through the oscommerce admin.
+
+I've tried to keep as much as the code contained within the files as possible, as to ensure that 
+installing and using the Task Manager Contribution was as easy as Possible.
+
+NOTE: When Adding a Project, the Project Name needs to be 3 Characters or More. 
+
+You may have to install an admin Contribution. Recommended Contribution, which is compatible with the task manager:
+http://www.oscommerce.com/community/contributions,1174
+
+Upto 5 Files will get modified, if you install everything (including the optional Tweak to index.php and the optional (but I feel neccessary) tweak to account.php).
+
+ADDITIONAL NOTES ON THIS CONTRIBUTION:
+NEW: Customer Tasks
+With the New Task Manager, it is possible to assign a Project to a Customer (especially useful if you 
+are offering Services to your Customers). As well, your Clients can log-in to thier Account and Review
+thier Current Project(s) and task(s) statuses.
+
+This hopefully will reduce the unidating emails and phone calls of "Where are you on my Project".
+
+Recurring Tasks:
+If the status has been assigned as such, will not be removed from the Task List.
+They will continue to be listed until the status has been changed.
+To Change a Task's Status from Recurring to a 'regular' status, you will need to use the "Review ALL Tasks" link (admin_tasks_all.php). 
+ 
+UPDATES TO THE TASK MANAGER:
+V. 2.00:
+4-20-2006
+- Fixed the Overdue Email sending procedure. If a Task is overdue, you will only get one email, not the continuous flooding that occurred in V 1.10 Variable was added to database to prevent flooding
+4-17-2006
+- Added Customer Select Drop Down to the "Add a New Project" box, enabling you to assign projects to a
+Customer.
+- Added Mods to account.php for the review of Customer Assigned Projects and Tasks.
+- Added "View Tasks" by Click ing on Project name. (Similiar functionality to the Select By Drop-Down)
+
+4-13-2006
+Bug Fix: "Due Date" Calendar was not functioning as it should have, replaced Calendar with one that works.
+Oversight: "Add Project" name field required a minimum of 5 Characters. Now only Requires 3.
+OverSight: "Task Description" was taking up alot of space in the Task List, Truncated Text to 4 whole
+words... 
+A hearty Spiritual thanks to AirolG for noticing these issues, and aiding in debugging.
+
+4-12-2006
+- Added "Direct Edit" - Clicking on Icon Next to Task, Task name or Task Description takes you to the Edit Screen
+- Added Task Manager Productivity Report: Review the productivity of your Assignees, and deable to print this report for review
+- Added "View Task By" dropdowns. View Task By Status OR By Project
+  (at the moment, it is one or the other, not both. Perhaps in a Future Build)
+4-11-2006
+- Added Column Sorting to Project List View and to Task List View
+- Added Task Status to Adding a New Task
+- Added Task Due Date to Adding New Task
+- Added Task Due Date to Editting Task
+- Added Due date to Task List View
+- Added "New Task" Email - Sends Email to Assigned Admin.
+- Added "Editted Task" Email - Sends Email to Assigned Admin when a task has been editted.
+- Added "Over-Due Task" Email - Sends Email to Assigned Admin when a task is over-due.
+(was later removed for flooding)
+
+- Fixed Error in SQL File from V 1.10: Thanks to Airolg for noticing that
+
+V. 1.10:
+4-7-2006
+- valeeum reported the when using ' in a Project Name an SQL Error Occurred.
+This has been Fixed.
+
+- Recurring Tasks have been added to the database table "admin_tasks_statuses"
+		- Daily Recurring Task
+		- Weekly Recurring Task
+        - Monthly Recurring Task
+- When editting a recurring task through the Task Manager, the Recurring Task Status Cannot Be changed. (Editting through admin_tasks.php)
+- When editting a task through the Completed Task Manager (aka admin_tasks_all.php) Recurring Tasks can be changed to have regular Statuses
+- Included 3 missing Button Images to Package. Thanks Gang!
+- Updated the box task_manager.php to include a link to the Completed Task Screen
+
+- I have also included a nice little tweak to index.php (Step 5 of the Install)
+
+SPECIAL THANKS GOES OUT TO:
+Airolg, Oihun, and Valeeum for thier feedback, Support, and List of Features to add to the Task Manager. I might be able to take credit for making the Task Manager, but those are the people who get Credit for making the Task Manager Better!
+
+You Guys Rock!
+
+Extra Special Thanks goes to Airolg for aiding in the debugging of the Task Manager 2.0
+
+SUPPORT FOR THIS CONTRIBUTION:
+The Support Forum for this Contribution can be Found:
+http://forums.oscommerce.com/index.php?showtopic=203284
+
+IF YOU ARE UPGRADING FROM A PREVIOUS VERSION:
+1 - Unzip the task_man_002.zip
+
+2 - Run the upgrade_sql.sql file in this contribution.
+This installs changes made to the database tables. It is merely adding a few more rows, to a couple of
+tables!
+
+3.0 - Edit Lines 74 - 105 to edit your New Task Email Message.
+3.1 - Edit Lines 122-153 to edit your Editted Task Email Message.
+(These may Very Well become Variables in a Language File)
+4 - Add the Follwing lines to filenames.php :
+
+define('FILENAME_ADMIN_TASKS_COMP', 'admin_tasks_complete.php'); 
+define('FILENAME_ADMIN_TASKS_REP', 'admin_tasks_report.php'); 
+(Try to put this with your other defines for the task Manager)
+
+5 - Upload all the included files.
+Upgrade Complete
+
+NOTE: You will notice two javascript files in the admin/includes/ folder. As much as I like SpiffyCal,
+it doesn't always seem to work correctly, so I included popcal by Xin. This is one Calendar I feel should be used instead of spiffycal. But that's my Preference.
+
+
+TO INSTALL THE TASK MANAGER CONTRIBUTION:
+
+1- Unzip the task_man_001.zip
+
+2- In PHPmyAdmin or another MySQL editor run the task_manager.sql file.
+   This will install the neccessary database tables into your database.
+
+3- Upload the included files to your admin directory.
+   admin/admin_tasks.php
+   admin/admin_tasks_all.php
+   admin/includes/boxes/task_manager.php
+   admin/includes/languages/english/images/buttons/button_admin_project.gif
+   admin/includes/languages/english/images/buttons/button_admin_projects.gif
+   admin/includes/languages/english/images/buttons/button_admin_task.gif
+   admin/includes/languages/english/admin_tasks.php
+   images/status/1.gif
+   images/status/2.gif
+   images/status/3.gif
+   images/status/4.gif
+   images/status/5.gif
+   images/status/6.gif
+   images/status/7.gif
+   images/status/8.gif
+   images/status/9.gif
+   images/status/10.gif
+   images/status/11.gif
+   images/status/12.gif
+   images/status/13.gif
+   images/status/14.gif 
+4- FILES TO MODIFY:
+admin/includes/filenames.php
+
+Anywhere in the filenames.php add the following lines:
+
+define('FILENAME_ADMIN_TASKS', 'admin_tasks.php');
+define('FILENAME_ADMIN_TASKS_ALL', 'admin_tasks_all.php');  
+define('FILENAME_ADMIN_TASKS_COMP', 'admin_tasks_complete.php');  
+define('FILENAME_ADMIN_TASKS_REP', 'admin_tasks_report.php'); 
+
+admin/includes/database_tables.php
+
+Anywhere in the database_tables.php add the following lines:
+define('TABLE_ADMIN_TASKS', 'admin_tasks');
+define('TABLE_ADMIN_PROJECTS', 'admin_projects');
+define('TABLE_ADMIN_TASKS_PRIORITIES', 'admin_tasks_priorities');
+define('TABLE_ADMIN_TASKS_STATUSES', 'admin_tasks_statuses');
+
+admin/includes/column_left.php
+
+Anywhere you want to box to appear, add the following code:
+require(DIR_WS_BOXES . 'task_manager.php');
+
+
+5 - A Cool Tweak to admin/index.php
+This tweak is only if you want a user alerted upon thier login of any tasks that have been 
+assigned to them. I've only Included this because I consider this to be an Option that than a neccessity. 
+
+in admin/index.php
+paste the follwing lines of code near the Header title call in index.php
+<?php $admin_tasks_query = tep_db_query("select count(*) as count from " . TABLE_ADMIN_TASKS . " where admin_id='". $login_id."'");
+    $admin_tasks = tep_db_fetch_array($admin_tasks_query);?>
+						  &nbsp;<?php //echo $orders_pending['count'];
+						  echo 'You currently have <a href="admin_tasks.php"><b>' . $admin_tasks['count'] . '</b></a> Tasks Assigned to you. Please <a href="admin_tasks.php">Click here to review your Tasks & Projects.</a>';
+						  ?>
+
+This will display a neat little message to the user.
+
+6 - An Addition to account.php in your Store root:
+After the line:
+<?php
+  }
+?>
+
+and Before:
+      <tr>
+        <td><table border="0" width="100%" cellspacing="0" cellpadding="2">
+          <tr>
+            <td class="main"><b><?php echo MY_ACCOUNT_TITLE; ?></b></td>
+          </tr>
+Add: 
+<!--Projects Row Begins-->
+		<?php 
+		$customer_projects_query = tep_db_query("select admin_projects_customer from admin_projects where admin_projects_customer ='" . (int)$customer_id . "' limit 1");
+		while ($customer_projects = tep_db_fetch_array($customer_projects_query)) {
+		if ($customer_projects['admin_projects_customer'] == NULL) {
+		
+		} else {
+		?>
+	  <tr>
+        <td><table border="0" width="100%" cellspacing="0" cellpadding="2">
+          <tr>
+            <td class="main"><b>My Projects & Tasks</b></td>
+          </tr>
+        </table></td>
+      </tr>
+      <tr>
+        <td><table border="0" width="100%" cellspacing="1" cellpadding="2" class="infoBox">
+          <tr class="infoBoxContents">
+            <td><table border="0" width="100%" cellspacing="0" cellpadding="2">
+              <tr>
+                <td width="5"><?php echo tep_draw_separator('pixel_trans.gif', '5', '1'); ?></td>
+                <td width="50" align="center" valign="top"><IMG SRC="images/account_tasks.gif" /></td>
+                <td width="5"><?php echo tep_draw_separator('pixel_trans.gif', '5', '1'); ?></td>
+                <td>
+				<!--BEGIN TASKS TABLE-->
+				<!--This is where the projects and tasks will be listed.-->
+				<table border="0" width="100%" cellspacing="0" cellpadding="2">
+									
+<tr>
+									  <td valign="top" bgcolor="#660000" class="main"><span class="style4">Project Name: </span></td>
+									  <td width="357" align="center" valign="top" bgcolor="#660000" class="main">&nbsp;</td>
+								
+				    </tr>
+					<?php
+$customerprojects_query = tep_db_query("select admin_projects_id, admin_projects_name from admin_projects where admin_projects_customer='". (int)$customer_id ."'");
+while ($customerprojects = tep_db_fetch_array($customerprojects_query)){
+					?>
+<tr class="moduleRow" onMouseOver="rowOverEffect(this)" onMouseOut="rowOutEffect(this)">
+										<td class="main" valign="top" width="216"><span class="style5"><?php echo $customerprojects['admin_projects_name']; ?></span></td>
+										<td align="center" valign="top" class="main"><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td bgcolor="#660000" class="style4" width="50%">Task Name</td>
+    <td bgcolor="#660000" class="style4" width="25%">Task Status</td>
+    <td bgcolor="#660000" class="style4" width="25%">Task Priority</td>
+  </tr>
+  <?php
+$customertasks_query = tep_db_query("select admin_task_id, admin_task_name, admin_task_status, admin_task_priority from admin_tasks where admin_projects_id='". $customerprojects['admin_projects_id'] ."'");
+while ($customertasks = tep_db_fetch_array($customertasks_query)){
+					?>
+    <tr>
+    <td><?php echo $customertasks['admin_task_name'];?></td>
+    <td><?php //$customertasks_status_query = tep_db_query("select admin_status_name from admin_tasks_statuses where admin_status_id='".$customertasks['admin_task_status']."'");
+	//$customertasks_status = tep_db_fetch_array($customertasks_status_query);
+	//echo $customertasks_status['admin_status_name'];
+	echo '<IMG SRC="images/status/'. $customertasks['admin_task_status'] .'.gif" width="100" height="25">';?></td>
+    <td><?php $customertasks_priority_query = tep_db_query("select admin_priority_name from admin_tasks_priorities where admin_priority_id='".$customertasks['admin_task_priority']."'");
+	$customertasks_priority = tep_db_fetch_array($customertasks_priority_query);
+	echo $customertasks_priority['admin_priority_name'];
+	//echo $customertasks['admin_task_priority'];?></td>
+  </tr>
+  
+  <?php } ?>
+</table>
+</td>
+				    </tr>
+					<tr><td colspan="2"><hr /></td></tr>
+									<?php
+									} 
+									}
+									?>
+									<tr>
+                    <td colspan="3" align="center" bgcolor="#660000" class="style4">End of your Projects</a></td>
+                  </tr>
+				  </table>
+				<!--END TASKS TABLE-->
+				</td>
+                <td width="10" align="right"><?php echo tep_draw_separator('pixel_trans.gif', '10', '1'); ?></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+      </tr>
+	  <?php } 
+	  ?> 
+	 <!--Projects Row Ends---->		
+	 
+To have the Customer Be able to Review thier projects, after logging in.
+
+That's it.
+Happy Tasking!   

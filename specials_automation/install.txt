@@ -1,0 +1,55 @@
+osCommerce, Open Source E-Commerce Solutions
+http://www.oscommerce.com
+
+Copyright © 2003 osCommerce
+  
+Specials Automation (or ByPass)
+Custom Developed by James Harvey aka DemonAngel
+altered@alteredpixels.net
+Copyright © 2006 Altered Pixels
+ 
+http://www.alteredpixels.net/
+
+This contribution was downloaded from:
+http://www.oscommerce.com/community/contributions,4325
+
+This Contribution has a support Forum Located at:
+http://forums.oscommerce.com/index.php?showtopic=214184
+
+Special Thanks goes to:
+-Felix Scwartz: He made a contribution for adding a start date to OSC's Specials. Made it one less steop I had to do.
+Thanks Felix!
+
+
+NOTES ON THIS CONTRIBUTION:
+This contribution is directly based off of Felix Shcwarts' "Specials Valid From" 
+Contribution (http://www.oscommerce.com/community/contributions,2520) which is also included 
+as part of this contribution. 
+
+What it does is:
+-Adds a Starting Date Range for a Product's Special (Felix's Contrib).
+-Adds an Inline Table for Editting/Adding a Products Special from the Product Edit page 
+in the admin.
+
+INSTALLATION:
+1- BACK your Files, BACKUP your database. We can never stress it enough.
+BACK UP BACK UP BACK UP!!!!!
+
+2- Alter your database (e.g. with PHPMyAdmin or command line) so that there is
+a place to store the start date.
+ALTER TABLE `specials` ADD `valid_from_date` DATETIME DEFAULT NULL;
+
+3- Extremly fast installation
+
+    If you didn't install a contribution that modified
+    catalog/admin/specials.php, the specials.php language files in catalog/admin/includes/languages,
+    catalog/admin/includes/javascript/calendarcode.js or catalog/includes/functions/specials.php
+    you may simply copy the new admin directory (the one that is created after extracting the zip
+    of this contribution) over the old one and replace changed files.
+
+4 - Open your catalog/admin/categories.php
+Open the included categories_php_additions.txt file and follow the instructions for modifying your 
+categories.php file.
+		
+That's it. It is That Simple.		
+Happy Specialing!
