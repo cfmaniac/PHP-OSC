@@ -1,0 +1,641 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>QPBPP - price break per discount category mod</title>
+<style type="text/css">
+body { background-color: lightyellow; font-family: Georgia, Verdana, Times New Roman; font-size: 90%; color: black; }
+p { font-family: Georgia, Verdana, Times New Roman; font-size: 90%; color: black;}
+p.linenumber { font-family: Courier, New Courier, monospaced;
+font-size: 13px; line-height: 150%; color: darkred;}
+textarea.old { font-family: Courier, New Courier, monospaced ; background-color: #e0e0e0; font-size: 13px; border: 1px dotted black; width:100%;}
+textarea.new { font-family: Courier, New Courier, monospaced ; font-size: 13px; border: 1px dotted black; width:100%;}
+</style>
+<script type="text/javascript" language="JavaScript">
+<!-- http://www.webdevbros.net/2005/11/30/auto-resizing-textarea/ -->
+// automatically resizes a textarea depending on the input
+// call the function in the onkeyup-event of the tarea.
+// t [textarea]: the textarea you want to handle
+// minRows [int]: minimum amount of rows
+function resizeTextArea(t, minRows) {
+t.rows = minRows;
+t.setAttribute("wrap", "off");
+t.style.overflow = "auto";
+
+lines = t.value.split("\n");
+t.rows = ((lines.length + 1 > minRows) ? lines.length + 1 : minRows);
+}
+function newWindow(screengif) {
+  screenshotWindow = window.open(screengif, 'screenshot', 'toolbar=yes,location=yes,scrollbars=yes,width=980,height=520')
+  screenshot.focus();
+}
+//-->
+</script>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="content-language" content="en" />
+</head>
+<body>
+<h1 style="margin-bottom: 0px;">QPBPP - price break per discount category mod</h1>
+<h3 style="margin-top: 0px;">written by JanZ</h3>
+<h4>Released under the <a href="http://www.fsf.org/licensing/licenses/gpl.html" target="_blank">GNU General Public License</a></h4>
+
+<p>These are the instructions for manually adding a modification to Quantity Price Breaks Per Products v1.2.9 (QPBPP): give a price break for products bought from the same discount category.</p>
+
+<p>Example, you have a price break for a product when 5 items are bought. With this mod, the number of products in the shopping cart from the same discount category is determined first and those numbers are used to calculate the price break. So when 2 products A and 3 products B from discount category 1 (lets say 'hardware') are bought, prices of products A and B are as if 5 items from each were bought. It could also be CD's from one artist or products from one manufacturer. Discount category is completely independent of the category a product is listed under.</p>
+
+<p>It is a further development of a flawed mod I added to the QPBPP for SPPC version once, to give a price break for products from the same category. I didn't realize at the time that products could be listed under more than one category. This modification is more versatile because you can group products in discount categories any way you like. It also meant that the admin side became a lot more complicated to code and to install.</p>
+<p><strong>WARNING:</strong> with this modification attributes do not differentiate products anymore for a price break. The base products_id is used as a default if the product is not in a discount category. The number of products with the same base products_id is added together to calculate the price break. This is similar behaviour to the price break per base products_id mod described in versions 1.2.0 tot 1.2.3 so if you only need that, please download version 1.2.3 for those instructions.</p>
+<p>Example, you have a price break for a product when 5 items are bought but it also has an attribute say color (red or blue). Without this modification when someone buys 3 products of the color red and 2 of the color blue he/she will not get the price break for 5 items (because red has e.g. a products_id of 225{3}3 and blue 225{3}4). 
+
+With this mod, the number of products in the shopping cart with the same base products_id (225 in the above example) is determined first and those numbers are used to calculate the price break. So when 1 red product and 4 blue products are bought, prices of the red products and the blue product would be as if 5 items from each were bought.</p>
+
+<p>The additional admin file to define and edit discount categories (admin/discount_categories.php) also contains a Quick Price Update styled page to get an overview of product in a discount category and to quickly move products in and out of discount categories. Use the new button "show products" in the right column to get to that part (see screenshots: <a href="javascript: newWindow ('screenshots/scrnshot_discount_categories.gif')">discount categories</a> and <a href="javascript: newWindow ('screenshots/scrnshot_prods_to_discount_cats.gif')">products to discount categories</a>).</p>
+
+<p>The modified files for this modification are added to the package with _pbpdc (price break per discount category) added to the name. Upload and rename them to their normal names (or vice versa).</p>
+
+<p>Because of other contributions you might have added you might want to add this modification manually to the certain files like the class shopping_cart.php. PriceFormatter.php and PriceFormatterStore.php are QPBPP specific files so there is no need (and instructions) to make manual changes.</p>
+
+<p>Note: line numbers refer to the original line numbers in the files modified Quantity Price Breaks v1.2.4 (osC2 RC2a version was used, line numbers refer to that. This mod should work for older versions too though).</p>
+
+<h3>Installation Scenarios</h3>
+
+<p>This contribution has been written for osCommerce Milestone 2.2 RC2a as a modification of Quantity Price Breaks Per Product (so this should already be installed, version 1.2.3 or 1.2.4). If you have a new installation of Milestone 2.2 RC2a then the easiest way to install this contribution is to first run the discount_categories.sql on your MySql machine (most ISP's will offer use of phpMyAdmin). Then upload the included files with _pbpdc in the name to their respective directories and rename them (remove the _pbddc in the name).</p>
+
+<p>A much easier way to install the contribution manually is to use a product like Compare & Merge or similar as this greatly decreases the amount of time required to do a manual install and also highlights the exact changes between the contrib and your original files. This is the preffered way to install the contrib manually. (http://www.compareandmerge.com/) Their site offers a trial version that will do 50 files so it will complete this install for you at no cost.<br />
+A FOSS tool is KDiff3 (http://kdiff3.sourceforge.net) that I personally haven't used for merging, but it is a nice tool to find and show file differences.</p>
+
+<p>If you prefer to use an install text instead of this HTML version then you can still use this html file. The html tags were left above and below the code. It was only necessary to change the no-break spaces (&amp;nbsp; and &amp;#160;) to &amp;amp;nbsp; and &amp;amp;#160; respectively going from text to HMTL version.</p>
+
+<p>If you have trouble selecting text from a large text area (the larger one will expand when you click in them by the way), your browser most likely will enable you to do a "select all" (Control-A or equivalent Mac version) of the text in the text area the cursor is in.</p>
+
+<p>For those who know what to do with it diff files for admin/categories.php were added to the package. They were created with the command <i>diff -ub old_file new_file > patch_file</i>. The patch file has been given the same name as the old_file/new_file but with the diff extension instead of php (diff or patch appear to be the accepted extensions and because of Windows diff is probably preferred and most used anyway). The one to upgrade the categories.php changed for QPBPP is named categories_upgrade_to_dc.diff.</p>
+<p>To apply the changes using the diff file you likely will want to see if the patch will not throw any errors. Then you first use: <i>patch --dry-run file_to_patch patch_file</i> and if everything seems to work fine you apply the patch. I would say use the command to also create a backup of the original file (with a .orig extension).</p>
+<p>So having the diff uploaded to the same directory as the file to change and having changed path to that directory:<br />
+<i>patch -b categories.php categories_upgrade_to_dc.diff</i> will create the patched file categories.php and the backup categories.php.orig.</p>
+<p>Diff and patch are standard command line utilities on Mac's (OS X) and Linux systems.</p>
+<!-- ========================================== -->
+<h3>Manual Installation</h3>
+
+<p>Before beginning the manual install you need to:</p>
+
+<p>Upload three included image files to your site. They are (and located in):</p>
+<ul>
+<li>catalog/admin/images/icon_down.gif</li>
+<li>catalog/admin/images/icon_up.gif</li>
+<li>catalog/admin/includes/languages/english/images/buttons/button_show_products.gif</li>
+</ul>
+<p>If you have added Quick Price Updates the two icon gifs with that name should be in there already. They are the same.</p>
+<p>Run the discount_categories.sql database installation file on your MySQL database or copy and paste the following instructions:</p>
+<textarea readonly="readonly" class="new" rows="13" cols="150">
+DROP TABLE IF EXISTS `discount_categories`;
+CREATE TABLE `discount_categories` (
+   `discount_categories_id` int NOT NULL auto_increment,
+   `discount_categories_name` varchar(255) NOT NULL,
+   PRIMARY KEY (discount_categories_id)
+);
+
+DROP TABLE IF EXISTS `products_to_discount_categories`;
+CREATE TABLE `products_to_discount_categories` (
+  `products_id` int NOT NULL,
+  `discount_categories_id` int NOT NULL,
+  PRIMARY KEY (products_id)
+);
+</textarea>
+<p>Note: the name of a discount category can be up to 255 characters long but only 70 are displayed in the drop-down menu's.</p>
+<p>Upload two new .php files:</p>
+<ul>
+<li>catalog/admin/discount_categories.php</li>
+<li>catalog/admin/includes/languages/english/discount_categories.php</li>
+</ul>
+<p>Upload catalog/includes/classes/PriceFormatter_pbpdc.php and rename to PriceFormatter.php (or vice versa).</p>
+<p>Upload catalog/includes/classes/PriceFormatterStore_pbpdc.php and rename to PriceFormatterStore.php (or vice versa).</p>
+<!-- ========================================== -->
+<a name="filelist"></a>
+<h3>List of files that need to be changed:</h3>
+<ul>
+<li><span style="color: blue">catalog/includes/classes/PriceFormatter.php (upload pbpdc version)</span></li>
+<li><span style="color: blue">catalog/includes/classes/PriceFormatterStore.php (upload pbpdc version)</span></li>
+<li><a href="#cat_incl_db_tables">catalog/includes/database_tables.php</a></li>
+<li><a href="#adm_incl_db_tab">catalog/admin/includes/database_tables.php</a></li>
+<li><a href="#adm_incl_funct_gen">catalog/admin/includes/functions/general.php</a></li>
+<li><a href="#adm_incl_lang_en">catalog/admin/includes/languages/english.php</a></li>
+<li><a href="#adm_incl_lang_en_cat">catalog/admin/includes/languages/english/categories.php</a></li>
+<li><a href="#adm_incl_filenames">catalog/admin/includes/filenames.php</a></li>
+<li><a href="#adm_incl_boxes_cat">catalog/admin/includes/boxes/catalog.php</li>
+<li><a href="#adm_cat">catalog/admin/categories.php</a></li>
+<li><a href="#cat_incl_class_shop">catalog/includes/classes/shopping_cart.php</a></li>
+</ul>
+<!-- ========================================== -->
+<a name="cat_incl_db_tables" id="cat_incl_db_tables"></a>
+<h3>catalog/includes/database_tables.php</h3>
+
+<p class="linenumber">Line 59:<br />
+
+**AFTER**</p>
+<textarea class="old" rows="1" cols="150" readonly="readonly">
+  define('TABLE_ZONES', 'zones');
+</textarea>
+<p class="linenumber">**ADD**</p>
+<textarea class="new" rows="2" cols="150" readonly="readonly">
+  define('TABLE_DISCOUNT_CATEGORIES', 'discount_categories');
+  define('TABLE_PRODUCTS_TO_DISCOUNT_CATEGORIES', 'products_to_discount_categories');
+</textarea>
+<!-- ========================================== -->
+<a name="adm_incl_db_tab" id="adm_incl_db_tab"></a>
+<h3>catalog/admin/includes/database_tables.php</h3>
+
+<p class="linenumber">Line 58:<br />
+
+**AFTER**</p>
+<textarea class="old" rows="1" cols="150" readonly="readonly">
+  define('TABLE_ZONES', 'zones');
+</textarea>
+<p class="linenumber">**ADD**</p>
+<textarea class="new" rows="3" cols="150" readonly="readonly">
+  define('TABLE_DISCOUNT_CATEGORIES', 'discount_categories');
+  define('TABLE_PRODUCTS_TO_DISCOUNT_CATEGORIES', 'products_to_discount_categories');
+</textarea>
+<!-- ========================================== -->
+<a name="adm_incl_funct_gen" id="adm_incl_funct_gen"></a>
+<h3>catalog/admin/includes/functions/general.php</h3>
+
+<p class="linenumber">Line 907 (this is inside the function tep_remove_product($product_id) that starts around line 882)<br />
+
+**AFTER**</p>
+<textarea class="old" rows="1" cols="150" readonly="readonly">
+    tep_db_query("delete from " . TABLE_REVIEWS . " where products_id = '" . (int)$product_id . "'");
+</textarea>
+<p class="linenumber">**ADD**</p>
+<textarea class="new" rows="4" cols="150" readonly="readonly">
+// BOF QPBPP price break per discount category
+    tep_db_query("delete from " . TABLE_PRODUCTS_TO_DISCOUNT_CATEGORIES . " where products_id = '" . (int)$product_id . "'");
+// BOF QPBPP price break per discount category
+</textarea>
+<p class="linenumber">**Add** the function qpbpp_insert_update_discount_cats to the file (can be at the bottom but before the ?> on the last line)</p>
+<textarea readonly="readonly" class="new" rows="6" cols="150" name="adm_incl_func_gen" onclick="resizeTextArea(this, 6);">
+  function qpbpp_insert_update_discount_cats($products_id, $current_discount_categories_id, $new_discount_categories_id) {
+    if (!tep_not_null($products_id)) {
+      return false; // if $products_id is not set stop here
+    }
+    if ($current_discount_categories_id == $new_discount_categories_id) {
+      return true; // if they are the same no update is necessary
+    }
+    if ($current_discount_categories_id == 0 && $new_discount_categories_id > 0) {
+    // insert needed
+      tep_db_query("insert into " . TABLE_PRODUCTS_TO_DISCOUNT_CATEGORIES . " (products_id, discount_categories_id) values ('" . (int)$products_id . "', '" . (int)$new_discount_categories_id . "')");
+      return true;
+    }
+    if ($current_discount_categories_id > 0 && $new_discount_categories_id == 0) {
+    // delete needed
+      tep_db_query("delete from " . TABLE_PRODUCTS_TO_DISCOUNT_CATEGORIES . " where products_id = '" . (int)$products_id . "'");
+      return true;
+    }
+    if ($current_discount_categories_id > 0 && ($current_discount_categories_id !== $new_discount_categories_id)) {
+    // update needed
+      tep_db_query("update " . TABLE_PRODUCTS_TO_DISCOUNT_CATEGORIES . " set discount_categories_id = '" . (int)$new_discount_categories_id . "' where products_id = '" . (int)$products_id . "' and discount_categories_id = '" . (int)$current_discount_categories_id . "'");
+      return true;
+    }
+      return false; // for good measure
+  }
+</textarea>
+<!-- ========================================== -->
+<a name="adm_incl_lang_en" id="adm_incl_lang_en"></a>
+<h3>catalog/admin/includes/languages/english.php</h3>
+
+<p class="linenumber">Line 71-73<br />
+
+**AFTER**</p>
+<textarea class="old" rows="3" cols="150" readonly="readonly">
+// categories box text in includes/boxes/catalog.php
+define('BOX_HEADING_CATALOG', 'Catalog');
+define('BOX_CATALOG_CATEGORIES_PRODUCTS', 'Categories/Products');
+</textarea>
+<p class="linenumber">**ADD**</p>
+<textarea class="new" rows="2" cols="150" readonly="readonly">
+define('BOX_CATALOG_CATEGORIES_DISCOUNT_CATEGORIES', 'Discount Categories');
+</textarea>
+<p class="linenumber">Line 238<br />
+
+**AFTER**</p>
+<textarea class="old" rows="1" cols="150" readonly="readonly">
+define('IMAGE_SEND_EMAIL', 'Send Email');
+</textarea>
+<p class="linenumber">**ADD**</p>
+<textarea class="new" rows="1" cols="150" readonly="readonly">
+define('IMAGE_SHOW_PRODUCTS', 'Show Products');
+</textarea>
+<!-- ========================================== -->
+<a name="adm_incl_lang_en_cat" id="adm_incl_lang_en_cat"></a>
+<h3>catalog/admin/includes/languages/english/categories.php</h3>
+
+<p class="linenumber">After the last line (but before: ?>)</p>
+<p class="linenumber">**ADD**</p>
+<textarea class="new" rows="3" cols="150" readonly="readonly">
+define('TEXT_DISCOUNT_CATEGORY', 'Discount category:');
+define('ERROR_UPDATE_INSERT_DISCOUNT_CATEGORY', 'Something went wrong when updating or inserting into the table discount_categories');
+</textarea>
+<!-- ========================================== -->
+<a name="adm_incl_filenames" id="adm_incl_filenames"></a>
+<h3>catalog/admin/includes/filenames.php</h3>
+
+<p class="linenumber">**ADD**</p>
+<textarea class="new" rows="1" cols="150" readonly="readonly">
+  define('FILENAME_DISCOUNT_CATEGORIES', 'discount_categories.php');
+</textarea>
+<!-- ========================================== -->
+<a name="adm_incl_boxes_cat" id="adm_incl_boxes_cat"></a>
+<h3>catalog/admin/includes/boxes/catalog.php</h3>
+
+<p class="linenumber">Line 24<br />
+
+**AFTER**</p>
+<textarea class="old" rows="2" cols="150" readonly="readonly">
+    $contents[] = array('text'  => '<a href="' . tep_href_link(FILENAME_CATEGORIES, '', 'NONSSL') . '" class="menuBoxContentLink">' . BOX_CATALOG_CATEGORIES_PRODUCTS . '</a><br>' .
+</textarea> 
+<p class="linenumber">**ADD**</p>
+<textarea class="new" rows="3" cols="150" readonly="readonly">
+                                   '<a href="' . tep_href_link(FILENAME_DISCOUNT_CATEGORIES, '', 'NONSSL') . '" class="menuBoxContentLink">' . BOX_CATALOG_CATEGORIES_DISCOUNT_CATEGORIES . '</a><br>' .
+</textarea>
+<!-- ========================================== -->
+<a name="adm_cat" id="adm_cat"></a>
+<h3>catalog/admin/categories.php</h3>
+
+<p class="linenumber">Line 4<br />
+
+**REPLACE**</p>
+<textarea class="old" rows="1" cols="150" readonly="readonly">
+adapted for QPBPP v1.2.4 2008/02/02
+</textarea>
+<p class="linenumber">**WITH**</p>
+<textarea class="new" rows="1" cols="150" readonly="readonly">
+adapted for QPBPP v1.2.4 adapted for QPBPP v1.2.4 price break per discount category mod 2008/02/02
+</textarea>
+<p class="linenumber">Line 284-288<br />
+
+**AFTER** (this is at the end of case 'update_product' which is followed by case 'copy_to_confirm'</p>
+<textarea class="old" rows="5" cols="150" readonly="readonly">
+            } elseif ($action == 'update_product') {
+              tep_db_perform(TABLE_PRODUCTS_DESCRIPTION, $sql_data_array, 'update', "products_id = '" . (int)$products_id . "' and language_id = '" . (int)$language_id . "'");
+            }
+          }
+</textarea>
+<p class="linenumber">**ADD**</p> 
+<textarea class="new" rows="9" cols="150" readonly="readonly"> 
+ // BOF QPBPP price break per category
+          $current_discount_category = (int)$_POST['current_discount_cat_id'];
+          $new_discount_category = (int)$_POST['discount_categories_id'];
+          $discount_category_result = qpbpp_insert_update_discount_cats($products_id, $current_discount_category, $new_discount_category);
+          if ($discount_category_result == false) {
+            $messageStack->add_session(ERROR_UPDATE_INSERT_DISCOUNT_CATEGORY, 'error');
+          }
+// EOF QPBPP price break per category
+</textarea>
+<p class="linenumber">Line 323-324<br />
+
+**REPLACE**</p>
+<textarea class="old" rows="9" cols="150" readonly="readonly">
+            $product_query = tep_db_query("select products_quantity, products_model, products_image, products_price, products_price1, products_price2, products_price3, products_price4, products_price5, products_price6, products_price7, products_price8, products_price1_qty, products_price2_qty, products_price3_qty, products_price4_qty, products_price5_qty, products_price6_qty, products_price7_qty, products_price8_qty, products_qty_blocks, products_date_available, products_weight, products_tax_class_id, manufacturers_id from " . TABLE_PRODUCTS . " where products_id = '" . (int)$products_id . "'");
+
+            $product = tep_db_fetch_array($product_query);
+</textarea>            
+<p class="linenumber">**WITH**</p>
+<textarea class="new" rows="6" cols="150" readonly="readonly" name="adm_cat1" onclick="resizeTextArea(this, 6);">
+// BOF QBPP price break per category
+            $product_query = tep_db_query("select products_quantity, products_model, products_image, products_price, products_price1, products_price2, products_price3, products_price4, products_price5, products_price6, products_price7, products_price8, products_price1_qty, products_price2_qty, products_price3_qty, products_price4_qty, products_price5_qty, products_price6_qty, products_price7_qty, products_price8_qty, products_qty_blocks, products_date_available, products_weight, products_tax_class_id, manufacturers_id, ptdc.discount_categories_id from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCTS_TO_DISCOUNT_CATEGORIES . " ptdc on p.products_id = ptdc.products_id where p.products_id = '" . (int)$products_id . "'");
+
+            $product = tep_db_fetch_array($product_query);
+            $current_discount_categories_id = (int)$product['discount_categories_id'];
+// EOF QBPP price break per category            
+</textarea>
+<p class="linenumber">Line 338-339 [326-327 in original]<br />
+
+**AFTER** (this is just before the CACHE resets in case 'copy_to_confirm'</p>
+<textarea class="old" rows="4" cols="150" readonly="readonly">
+            tep_db_query("insert into " . TABLE_PRODUCTS_TO_CATEGORIES . " (products_id, categories_id) values ('" . (int)$dup_products_id . "', '" . (int)$categories_id . "')");
+            $products_id = $dup_products_id;
+</textarea>
+<p class="linenumber">**ADD**</p>
+<textarea class="new" rows="6" cols="150" readonly="readonly" name="adm_cat2" onclick="resizeTextArea(this, 6);">
+// BOF QPBPP price break per category
+            if ($current_discount_categories_id > 0) {
+// insert the new products_id in products_to_discount_categories only 
+// if the cloned product was already in it
+            $discount_category_result = qpbpp_insert_update_discount_cats($products_id, '0', $current_discount_categories_id);
+
+              if ($discount_category_result == false) {
+                $messageStack->add_session(ERROR_UPDATE_INSERT_DISCOUNT_CATEGORY, 'error');
+              }
+            } // end if ($current_discount_category > 0)
+// EOF QPBPP price break per category
+</textarea>
+<p class="linenumber">Line 431-432<br />
+
+**AFTER** (where line 407 is:   if ($action == 'new_product') {</p>
+<textarea class="old" rows="2" cols="150" readonly="readonly">
+                       'products_price8_qty' => '',
+                       'products_qty_blocks' => '',
+</textarea>
+<p class="linenumber">**ADD**</p>
+<textarea class="new" rows="2" cols="150" readonly="readonly">
+                       // next line for price break per discount category
+                       'discount_categories_id' => '',
+</textarea>
+<p class="linenumber">Line 446 [420 in original]<br />
+
+**REPLACE**</p>
+<textarea class="old" rows="9" cols="150" readonly="readonly">
+      $product_query = tep_db_query("select pd.products_name, pd.products_description, pd.products_url, p.products_id, p.products_quantity, p.products_model, p.products_image, p.products_price, p.products_price1, p.products_price2, p.products_price3, p.products_price4, p.products_price5, p.products_price6, p.products_price7, p.products_price8, p.products_price1_qty, p.products_price2_qty, p.products_price3_qty, p.products_price4_qty, p.products_price5_qty, p.products_price6_qty, p.products_price7_qty, p.products_price8_qty, p.products_qty_blocks, p.products_weight, p.products_date_added, p.products_last_modified, date_format(p.products_date_available, '%Y-%m-%d') as products_date_available, p.products_status, p.products_tax_class_id, p.manufacturers_id from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.products_id = '" . (int)$HTTP_GET_VARS['pID'] . "' and p.products_id = pd.products_id and pd.language_id = '" . (int)$languages_id . "'");
+</textarea>
+<p class="linenumber">**WITH**</p>
+<textarea class="new" rows="6" cols="150" readonly="readonly" name="adm_cat3" onclick="resizeTextArea(this, 6);">
+    // adapted for QPBPP, price break per discount category
+      $product_query = tep_db_query("select pd.products_name, pd.products_description, pd.products_url, p.products_id, p.products_quantity, p.products_model, p.products_image, p.products_price, p.products_price1, p.products_price2, p.products_price3, p.products_price4, p.products_price5, p.products_price6, p.products_price7, p.products_price8, p.products_price1_qty, p.products_price2_qty, p.products_price3_qty, p.products_price4_qty, p.products_price5_qty, p.products_price6_qty, p.products_price7_qty, p.products_price8_qty, p.products_qty_blocks, p.products_weight, p.products_date_added, p.products_last_modified, date_format(p.products_date_available, '%Y-%m-%d') as products_date_available, p.products_status, p.products_tax_class_id, p.manufacturers_id, ptdc.discount_categories_id  from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCTS_TO_DISCOUNT_CATEGORIES . " ptdc on p.products_id = ptdc.products_id, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.products_id = '" . (int)$HTTP_GET_VARS['pID'] . "' and p.products_id = pd.products_id and pd.language_id = '" . (int)$languages_id . "'");
+</textarea>
+<p class="linenumber">Line 467-470 [440-443 in original]<br />
+
+**AFTER**</p>
+<textarea class="old" rows="4" cols="150" readonly="readonly">
+    while ($tax_class = tep_db_fetch_array($tax_class_query)) {
+      $tax_class_array[] = array('id' => $tax_class['tax_class_id'],
+                                 'text' => $tax_class['tax_class_title']);
+    }
+</textarea>
+<p class="linenumber">**ADD**</p>
+<textarea class="new" rows="6" cols="150" readonly="readonly" name="adm_cat4" onclick="resizeTextArea(this, 6);">
+// BOF QPBPP price break per category
+    $discount_categories_array = array(array('id' => '0', 'text' => TEXT_NONE));
+    $discount_categories_query = tep_db_query("select discount_categories_id, discount_categories_name from " . TABLE_DISCOUNT_CATEGORIES . " order by discount_categories_name");
+    while ($discount_categories = tep_db_fetch_array($discount_categories_query)) {
+      $discount_categories_array[] = array('id' => $discount_categories['discount_categories_id'],
+                                 'text' => $discount_categories['discount_categories_name']);
+    }
+// EOF QPBPP price break per category
+</textarea>
+<p class="linenumber">Line 723-732<br />
+
+**AFTER**</p>
+<textarea class="old" rows="6" cols="150" readonly="readonly" name="adm_cat5" onclick="resizeTextArea(this, 6);">
+              <td class="main"><?php echo TEXT_PRODUCTS_PRICE8; ?></td>
+              <td colspan="3" align="left"><table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>
+              <td class="main" align="left"><?php echo tep_draw_separator('pixel_trans.gif', '24', '15') . '&amp;nbsp;' . tep_draw_input_field('products_price8', $pInfo->products_price8, 'size="10"'); ?></td>
+              <td class="main" align="right"><?php echo TEXT_PRODUCTS_PRICE8_QTY; ?></td>
+              <td class="main" align="left"><?php echo tep_draw_input_field('products_price8_qty', $pInfo->products_price8_qty, 'size="10"'); ?></td>
+              </tr></table></td>
+            </tr>
+            <tr>
+              <td colspan="2"><?php echo tep_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
+            </tr>
+</textarea>
+<p class="linenumber">**ADD**</p>
+<textarea class="new" rows="6" cols="150" readonly="readonly" name="adm_cat6" onclick="resizeTextArea(this, 6);">
+            <tr><!-- added for price break per category -->
+              <td class="main"><?php echo TEXT_DISCOUNT_CATEGORY ?></td>
+              <td class="main"><?php echo tep_draw_separator('pixel_trans.gif', '24', '15') . '&amp;nbsp;' . tep_draw_pull_down_menu('discount_categories_id', $discount_categories_array, $pInfo->discount_categories_id) . tep_draw_hidden_field('current_discount_cat_id', $pInfo->discount_categories_id); ?></td>
+            </tr>
+            <tr>
+              <td colspan="2"><?php echo tep_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
+            </tr>
+</textarea>
+<p class="linenumber">Line 761 [718 in original]<br />
+
+**REPLACE**</p>
+<textarea class="old" rows="6" cols="150" readonly="readonly" name="adm_cat7" onclick="resizeTextArea(this, 6);">
+      $product_query = tep_db_query("select p.products_id, pd.language_id, pd.products_name, pd.products_description, pd.products_url, p.products_quantity, p.products_model, p.products_image, p.products_price, p.products_price1, p.products_price2, p.products_price3, p.products_price4, p.products_price5, p.products_price6, p.products_price7, p.products_price8, p.products_price1_qty, p.products_price2_qty, p.products_price3_qty, p.products_price4_qty, p.products_price5_qty, p.products_price6_qty, p.products_price7_qty, p.products_price8_qty, p.products_qty_blocks, p.products_weight, p.products_date_added, p.products_last_modified, p.products_date_available, p.products_status, p.manufacturers_id  from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.products_id = pd.products_id and p.products_id = '" . (int)$HTTP_GET_VARS['pID'] . "'");
+</textarea>
+<p class="linenumber">**WITH**</p>
+<textarea class="new" rows="6" cols="150" readonly="readonly" name="adm_cat8" onclick="resizeTextArea(this, 6);">
+    // adapted for QPBPP, price break per discount category
+      $product_query = tep_db_query("select p.products_id, pd.language_id, pd.products_name, pd.products_description, pd.products_url, p.products_quantity, p.products_model, p.products_image, p.products_price, p.products_price1, p.products_price2, p.products_price3, p.products_price4, p.products_price5, p.products_price6, p.products_price7, p.products_price8, p.products_price1_qty, p.products_price2_qty, p.products_price3_qty, p.products_price4_qty, p.products_price5_qty, p.products_price6_qty, p.products_price7_qty, p.products_price8_qty, p.products_qty_blocks, p.products_weight, p.products_date_added, p.products_last_modified, p.products_date_available, p.products_status, p.manufacturers_id, ptdc.discount_categories_id, dc.discount_categories_name from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCTS_TO_DISCOUNT_CATEGORIES . " ptdc on p.products_id = ptdc.products_id left join " . TABLE_DISCOUNT_CATEGORIES . " dc using(discount_categories_id), " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.products_id = pd.products_id and p.products_id = '" . (int)$HTTP_GET_VARS['pID'] . "'");
+</textarea> 
+<p class="linenumber">Line 969-971 (first two line are not changed but shown for reference, 925-930 in original)<br />
+
+**REPLACE**</p>
+<textarea class="old" rows="6" cols="150" readonly="readonly" name="adm_cat9" onclick="resizeTextArea(this, 6);">
+    $products_count = 0;
+    if (isset($HTTP_GET_VARS['search'])) {
+      $products_query = tep_db_query("select p.products_id, pd.products_name, p.products_quantity, p.products_image, p.products_price, p.products_price1, p.products_price2, p.products_price3, p.products_price4, p.products_price5, p.products_price6, p.products_price7, p.products_price8, p.products_price1_qty, p.products_price2_qty, p.products_price3_qty, p.products_price4_qty, p.products_price5_qty, p.products_price6_qty, p.products_price7_qty, p.products_price8_qty, p.products_qty_blocks, p.products_date_added, p.products_last_modified, p.products_date_available, p.products_status, p2c.categories_id from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c where p.products_id = pd.products_id and pd.language_id = '" . (int)$languages_id . "' and p.products_id = p2c.products_id and pd.products_name like '%" . tep_db_input($search) . "%' order by pd.products_name");
+    } else {
+      $products_query = tep_db_query("select p.products_id, pd.products_name, p.products_quantity, p.products_image, p.products_price, p.products_price1, p.products_price2, p.products_price3, p.products_price4, p.products_price5, p.products_price6, p.products_price7, p.products_price8, p.products_price1_qty, p.products_price2_qty, p.products_price3_qty, p.products_price4_qty, p.products_price5_qty, p.products_price6_qty, p.products_price7_qty, p.products_price8_qty, p.products_qty_blocks, p.products_date_added, p.products_last_modified, p.products_date_available, p.products_status from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c where p.products_id = pd.products_id and pd.language_id = '" . (int)$languages_id . "' and p.products_id = p2c.products_id and p2c.categories_id = '" . (int)$current_category_id . "' order by pd.products_name");
+</textarea>
+<p class="linenumber">**WITH**</p>
+<textarea class="new" rows="6" cols="150" readonly="readonly" name="adm_cat10" onclick="resizeTextArea(this, 6);">
+    $products_count = 0;
+    if (isset($HTTP_GET_VARS['search'])) {
+    // next two queries adapted for QPBPP price break per category
+      $products_query = tep_db_query("select p.products_id, pd.products_name, p.products_quantity, p.products_image, p.products_price, p.products_price1, p.products_price2, p.products_price3, p.products_price4, p.products_price5, p.products_price6, p.products_price7, p.products_price8, p.products_price1_qty, p.products_price2_qty, p.products_price3_qty, p.products_price4_qty, p.products_price5_qty, p.products_price6_qty, p.products_price7_qty, p.products_price8_qty, p.products_qty_blocks, p.products_date_added, p.products_last_modified, p.products_date_available, p.products_status, p2c.categories_id, ptdc.discount_categories_id, dc.discount_categories_name from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCTS_TO_DISCOUNT_CATEGORIES . " ptdc on p.products_id = ptdc.products_id left join " . TABLE_DISCOUNT_CATEGORIES . " dc using(discount_categories_id), " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c where p.products_id = pd.products_id and pd.language_id = '" . (int)$languages_id . "' and p.products_id = p2c.products_id and pd.products_name like '%" . tep_db_input($search) . "%' order by pd.products_name");
+    } else {
+      $products_query = tep_db_query("select p.products_id, pd.products_name, p.products_quantity, p.products_image, p.products_price, p.products_price1, p.products_price2, p.products_price3, p.products_price4, p.products_price5, p.products_price6, p.products_price7, p.products_price8, p.products_price1_qty, p.products_price2_qty, p.products_price3_qty, p.products_price4_qty, p.products_price5_qty, p.products_price6_qty, p.products_price7_qty, p.products_price8_qty, p.products_qty_blocks, p.products_date_added, p.products_last_modified, p.products_date_available, p.products_status, ptdc.discount_categories_id, dc.discount_categories_name from " . TABLE_PRODUCTS . " p left join " . TABLE_PRODUCTS_TO_DISCOUNT_CATEGORIES . " ptdc on p.products_id = ptdc.products_id left join " . TABLE_DISCOUNT_CATEGORIES . " dc using(discount_categories_id), " . TABLE_PRODUCTS_DESCRIPTION . " pd, " . TABLE_PRODUCTS_TO_CATEGORIES . " p2c where p.products_id = pd.products_id and pd.language_id = '" . (int)$languages_id . "' and p.products_id = p2c.products_id and p2c.categories_id = '" . (int)$current_category_id . "' order by pd.products_name");
+</textarea>      
+<p class="linenumber">Line 1149-1150 [original 1104-1105, about 40 lines from the end of the file]<br />
+
+**AFTER**</p>
+<textarea class="old" rows="5" cols="150" readonly="readonly">
+            $contents[] = array('text' => '<br>' . TEXT_PRODUCTS_PRICE_INFO . ' ' . $currencies->format($pInfo->products_price) . '<br>' . TEXT_PRODUCTS_QUANTITY_INFO . ' ' . $pInfo->products_quantity);
+            $contents[] = array('text' => '<br>' . TEXT_PRODUCTS_AVERAGE_RATING . ' ' . number_format($pInfo->average_rating, 2) . '%');
+</textarea>            
+<p class="linenumber">**ADD**</p>
+<textarea class="new" rows="4" cols="150" readonly="readonly">
+            // QPBPP price break per discount category
+            $contents[] = array('text' => '<br>' . TEXT_DISCOUNT_CATEGORY . ' ' . (tep_not_null($pInfo->discount_categories_name) ? $pInfo->discount_categories_name : TEXT_NONE));
+</textarea>
+
+<!-- ========================================== -->
+<a name="cat_incl_class_shop" id="cat_incl_class_shop"></a>
+<h3>catalog/includes/classes/shopping_cart.php</h3>
+
+<p class="linenumber">Line 3<br />
+
+**AFTER**</p>
+<textarea class="old" rows="1" cols="150" readonly="readonly">
+  $Id: shopping_cart.php 1739 2007-12-20 00:52:16Z hpdl $
+</textarea>  
+<p class="linenumber">**ADD**</p>
+<textarea class="new" rows="1" cols="150" readonly="readonly">
+  adapted for QPBPP per discount category mod 2007/11/24
+</textarea>	  
+<p class="linenumber">Line 49-51<br />
+
+**REPLACE**</p>
+<textarea class="old" rows="5" cols="150" readonly="readonly">
+      $products_query = tep_db_query("select products_id, customers_basket_quantity from " . TABLE_CUSTOMERS_BASKET . " where customers_id = '" . (int)$customer_id . "'");
+      while ($products = tep_db_fetch_array($products_query)) {
+        $this->contents[$products['products_id']] = array('qty' => $products['customers_basket_quantity']);
+</textarea>
+<p class="linenumber">**WITH**</p>
+<textarea class="new" rows="6" cols="150" readonly="readonly" name="cat_incl_class_shop1" onclick="resizeTextArea(this, 6);">
+// BOF Quantity Price Break, price break per discount category
+      $products_query = tep_db_query("select cb.products_id, ptdc.discount_categories_id, customers_basket_quantity from " . TABLE_CUSTOMERS_BASKET . " cb left join " . TABLE_PRODUCTS_TO_DISCOUNT_CATEGORIES . " ptdc using(products_id) where customers_id = '" . (int)$customer_id . "'");
+      while ($products = tep_db_fetch_array($products_query)) {
+        if ((int)$products['discount_categories_id'] > 0) {
+          $discount_category = 'dc' . $products['discount_categories_id'];
+        } else {
+          $discount_category = 'p' . (int)$products['products_id'];
+        }
+        $this->contents[$products['products_id']] = array('qty' => $products['customers_basket_quantity'], 'discount_category' => $discount_category);
+// EOF Quantity Price Break, price break per discount category
+</textarea>
+<p class="linenumber">Line 90-92<br />
+
+**AFTER**</p>
+<textarea class="old" rows="3" cols="150" readonly="readonly">
+      $pf = new PriceFormatter;
+      $pf->loadProduct($products_id, $languages_id);
+      $qty = $pf->adjustQty($qty);
+</textarea>
+<p class="linenumber">**ADD**</p>
+<textarea class="new" rows="1" cols="150" readonly="readonly">
+      $discount_category = $pf->get_discount_category();
+</textarea>
+<p class="linenumber">Line 124-127<br />
+
+**REPLACE**</p>
+<textarea class="old" rows="4" cols="150" readonly="readonly">
+          if ($this->in_cart($products_id_string)) {
+            $this->update_quantity($products_id_string, $qty, $attributes);
+          } else {
+            $this->contents[$products_id_string] = array('qty' => (int)$qty);
+</textarea>
+<p class="linenumber">**WITH**</p>
+<textarea class="new" rows="6" cols="150" readonly="readonly" name="cat_incl_class_shop2" onclick="resizeTextArea(this, 6);">
+// BOF Quantity Price Break, price break per discount category
+      if ($this->in_cart($products_id_string)) {
+        $this->update_quantity($products_id_string, $qty, $attributes, $discount_category); //added discount category
+      } else {
+        $this->contents[$products_id_string] = array('qty' => (int)$qty, 'discount_category' => $discount_category); //added discount category
+// EOF Quantity Price Break, price break per discount category
+</textarea>
+<p class="linenumber">Line 151<br />
+
+**REPLACE**</p>
+<textarea class="old" rows="1" cols="150" readonly="readonly">
+    function update_quantity($products_id, $quantity = '', $attributes = '') {
+</textarea> 
+<p class="linenumber">**WITH**</p>
+<textarea class="new" rows="3" cols="150" readonly="readonly">
+// BOF Quantity Price Break, price break per discount category
+    function update_quantity($products_id, $quantity = '', $attributes = '', $discount_category = '') { //added discount_category
+</textarea>
+<p class="linenumber">Line 175<br />
+
+**REPLACE**</p>
+<textarea class="old" rows="1" cols="150" readonly="readonly">
+        $this->contents[$products_id_string] = array('qty' => (int)$quantity);
+</textarea>
+<p class="linenumber">**WITH**</p>
+<textarea class="new" rows="3" cols="150" readonly="readonly">
+        $this->contents[$products_id_string] = array('qty' => (int)$quantity, 'discount_category' => $discount_category); //added discount category
+// EOF Quantity Price Break, price break per discount category
+</textarea>
+<p class="linenumber">Line 265-271<br />
+
+**REPLACE**</p>
+<textarea class="old" rows="8" cols="150" readonly="readonly">
+    function calculate() {
+      global $currencies, $languages_id;
+
+      $this->total = 0;
+      $this->weight = 0;
+      if (!is_array($this->contents)) return 0;
+      $pf = new PriceFormatter;
+</textarea>  
+<p class="linenumber">**WITH**</p>
+<textarea class="new" rows="6" cols="150" readonly="readonly" name="cat_incl_class_shop3" onclick="resizeTextArea(this, 6);">
+    function calculate() {
+      $this->total = 0;
+      $this->weight = 0;
+// BOF Quantity Price Break, price break per discount category
+      global $currencies, $languages_id;
+      if (!is_array($this->contents)) return 0;
+        $discount_category_quantity = array(); // calculates no of items per discount category in shopping basket
+      foreach ($this->contents as $products_id => $contents_array) {
+	      if (!isset($discount_category_quantity[$contents_array['discount_category']])) {
+		      $discount_category_quantity[$contents_array['discount_category']] = $contents_array['qty'];
+	      } else {
+		      $discount_category_quantity[$contents_array['discount_category']] += $contents_array['qty'];
+	      }
+      } // end foreach
+
+   $pf = new PriceFormatter;
+</textarea>
+<p class="linenumber">Line 283-284<br />
+
+**AFTER**</p>
+<textarea class="old" rows="2" cols="150" readonly="readonly">
+      while (list($products_id, ) = each($this->contents)) {
+        $qty = $this->contents[$products_id]['qty'];
+</textarea> 
+<p class="linenumber">**ADD**</p>
+<textarea class="new" rows="3" cols="150" readonly="readonly">
+        $number_of_items_in_cart_same_category = $discount_category_quantity[$this->contents[$products_id]['discount_category']];
+        $no_of_other_items_in_cart_from_same_cat = $number_of_items_in_cart_same_category - $qty;
+</textarea>
+<p class="linenumber">Line 291<br />
+
+**REPLACE**</p>
+<textarea class="old" rows="1" cols="150" readonly="readonly">
+          $products_price = $pf->computePrice($qty);
+</textarea>
+	  
+<p class="linenumber">**WITH**</p>
+<textarea class="new" rows="3" cols="150" readonly="readonly">
+          $products_price = $pf->computePrice($qty, $no_of_other_items_in_cart_from_same_cat);
+//   EOF Quantity Price Break, price break per discount category
+</textarea>
+<p class="linenumber">Line 343-344 (function get_products)<br />
+
+**REPLACE**</p>
+<textarea class="old" rows="2" cols="150" readonly="readonly">
+      if (!is_array($this->contents)) return false;
+       $pf = new PriceFormatter;
+</textarea>      
+<p class="linenumber">**WITH**</p>
+<textarea class="new" rows="6" cols="150" readonly="readonly" name="cat_incl_class_shop4" onclick="resizeTextArea(this, 6);">
+// BOF Quantity Price Break, price break per discount category
+      if (!is_array($this->contents)) return false;
+  
+      $discount_category_quantity = array();
+      foreach ($this->contents as $products_id => $contents_array) {
+	      if (!isset($discount_category_quantity[$contents_array['discount_category']])) {
+		 $discount_category_quantity[$contents_array['discount_category']] = $contents_array['qty'];
+	      } else {
+		 $discount_category_quantity[$contents_array['discount_category']] += $contents_array['qty'];
+	      }
+      } // end foreach
+      
+      $pf = new PriceFormatter;
+</textarea>
+<p class="linenumber">Line 360-361<br />
+
+**REPLACE**</p>
+<textarea class="old" rows="2" cols="150" readonly="readonly">
+        if ($products = $pf->loadProduct($products_id, $languages_id)) {
+          $products_price = $pf->computePrice($this->contents[$products_id]['qty']);
+</textarea>
+<p class="linenumber">**WITH**</p>
+<textarea class="new" rows="6" cols="150" readonly="readonly" name="cat_incl_class_shop5" onclick="resizeTextArea(this, 6);">
+	  if ($products = $pf->loadProduct($products_id, $languages_id)) {
+		  $qty = $this->contents[$products_id]['qty'];
+	       $number_of_items_in_cart_same_category =  $discount_category_quantity[$this->contents[$products_id]['discount_category']];
+	       $no_of_other_items_in_cart_from_same_cat = $number_of_items_in_cart_same_category - $qty;
+
+         $products_price = $pf->computePrice($this->contents[$products_id]['qty'], $no_of_other_items_in_cart_from_same_cat);
+//   EOF Quantity Price Break, price break per discount category
+</textarea>
+<p class="linenumber">Line 368-371<br />
+
+**AFTER**</p>
+<textarea class="old" rows="4" cols="150" readonly="readonly">
+          $products_array[] = array('id' => $products_id,
+                                    'name' => $products['products_name'],
+                                    'model' => $products['products_model'],
+                                    'image' => $products['products_image'],
+</textarea>
+<p class="linenumber">**ADD**</p>
+<textarea class="new" rows="4" cols="150" readonly="readonly">
+//   BOF Quantity Price Break, price break per discount category
+				    'discount_category' => $this->contents[$products_id]['discount_category'],
+//   EOF Quantity Price Break, price break per discount category
+</textarea>
+<!-- ========================================== -->
+</body>
+</html>
